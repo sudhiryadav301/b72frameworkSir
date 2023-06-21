@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [Suite]">
+  <test thread-count="5" name="Test(failed)">
+    <parameter name="grid" value="no"/>
+    <parameter name="browser" value="chrome"/>
+    <parameter name="appurl" value="${appurl}"/>
+    <classes>
+      <class name="script.ValidLogin">
+        <methods>
+          <include name="testValidLogin"/>
+          <include name="generateReport"/>
+          <include name="postCondition"/>
+          <include name="intReport"/>
+          <include name="preCondition"/>
+        </methods>
+      </class> <!-- script.ValidLogin -->
+      <class name="script.InvalidLogin">
+        <methods>
+          <include name="testInvalidLogin"/>
+          <include name="generateReport"/>
+          <include name="postCondition"/>
+          <include name="intReport"/>
+          <include name="preCondition"/>
+        </methods>
+      </class> <!-- script.InvalidLogin -->
+    </classes>
+  </test> <!-- Test(failed) -->
+</suite> <!-- Failed suite [Suite] -->
