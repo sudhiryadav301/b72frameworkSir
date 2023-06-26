@@ -15,8 +15,8 @@ public class InvalidLogin extends BaseTest
 		int rc=Excel.getRowCount(XL_PATH, "InvalidLogin");
 		for(int i=1;i<=rc;i++)
 		{
-			String un=Excel.getData(XL_PATH,"InvalidLogin", i, 0);
-			String pw=Excel.getData(XL_PATH,"InvalidLogin", i, 1);
+			String un=Excel.getCellData(XL_PATH,"InvalidLogin", i, 0);
+			String pw=Excel.getCellData(XL_PATH,"InvalidLogin", i, 1);
 	//		1. enter invalid un
 			LoginPage loginPage=new LoginPage(driver);
 			loginPage.setUserName(un);
