@@ -3,17 +3,25 @@ package generic;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.openqa.selenium.By;
+
+import io.restassured.path.json.JsonPath;
 
 public class Util {
 	public static String getProperty(String path,String key)
@@ -125,4 +133,108 @@ public class Util {
 		Iterator<String[]> iData = data.iterator();
 		return iData;
 	}
+	
+	public static Iterator<String[]>  getDataFromJSONtoIterator(String path)
+	{
+		ArrayList<String[]> data=new ArrayList<String[]>();
+		
+		try
+		{
+		JsonPath json=new JsonPath(new FileInputStream(path));
+		Map<String,List<String>> map=json.get();
+		Set<String> allKeys = map.keySet();
+		
+		
+		for(String key:allKeys)
+		{
+			List<String> list = map.get(key);
+			int size=list.size();
+			String[] s=new String[size];
+			for(int i=0;i<size;i++)
+			{
+				String v=list.get(i);
+				s[i]=v;
+			}
+			data.add(s);
+		}
+		
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		Iterator<String[]> iData = data.iterator();
+		return iData;
+	}
+	
+	public static String[][] getDataFromJSONtoArray(String path)
+	{
+		String[][] data=null;
+		try
+		{
+		JsonPath json=new JsonPath(new FileInputStream(path));
+		LinkedHashMap<String,ArrayList<String>> map=json.get();
+		
+		int rowCount=map.size();	
+		data=new String[rowCount][];
+		
+		Set<String> allKeys = map.keySet();
+		
+		int i=0;
+		
+		for(String key:allKeys) 
+		{
+			ArrayList<String> value =map.get(key);
+			int columnCount=value.size();
+			data[i]=new String[columnCount];
+			
+			for(int j=0;j<columnCount;j++)
+			{
+				String v = value.get(j);
+				data[i][j]=v;
+			}
+			
+			i++;
+		}
+		
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		
+		return data;
+	}
+	
+	public static Iterator<String[]> getDataFromDBtoIterator(String dbURL,String un,String pw,String query)
+	{
+		ArrayList<String[]> data=new ArrayList<String[]>();
+		try {
+				Connection connection = DriverManager.getConnection(dbURL,un,pw);
+				
+				ResultSet resultSet = connection.createStatement().executeQuery(query);
+				int colCount=resultSet.getMetaData().getColumnCount();
+				
+				while(resultSet.next())
+				{
+					String[] rec=new String[colCount];
+					
+					for(int i=1;i<=colCount;i++)
+					{
+						String v=resultSet.getString(i);
+						rec[i-1]=v;
+					}
+		
+					data.add(rec);
+				}
+				connection.close();
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		
+		return data.iterator();
+	}
+	
 }
